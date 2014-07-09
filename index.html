@@ -1,0 +1,241 @@
+<!doctype html>
+<html>
+<head>
+<title>Hmm.</title>
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+<style>
+* {
+  padding: 0;
+  margin: 0;
+}
+body, input {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+}
+body {
+  background-color: #eee;
+  background-image: url('bg/cream_pixels.png');
+}
+#quarantine {
+  width: 600px;
+  margin: 50px auto;
+  padding: 1em;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+#output {
+  
+}
+#input {
+  padding-top: 2em;
+}
+#input-text {
+  width: 95%;
+  border: none;
+  padding: 0.2em;
+  border-bottom: 1px dotted #222;
+  background-color: rgba(255, 255, 255, 0);
+}
+#input-text:focus {
+  outline: none;
+}
+#output {
+  line-height: 1.6;
+  cursor: default;
+}
+p.veronica {
+  color: #7812B7;
+  color: #9E09A8;
+}
+p.user {
+  color: black;
+}
+</style>
+</head>
+<body>
+
+<div id="quarantine">
+<div id="output"></div>
+<div id="input"><input type="text" id="input-text" /></div>
+</div>
+
+<script>
+
+var my_name = 'veronica';
+var self_regex = new RegExp("^(.*)\\b"+my_name+"\\b(.*)$", 'i');
+var history = [];
+var output = document.getElementById('output');
+var input = document.getElementById('input-text');
+
+window.onload = function() {
+  output.innerHTML = '<p class="veronica">Hi, I\'m Veronica</p>';
+  input.focus();
+}
+
+input.onkeydown = deal_with_input;
+
+function deal_with_input() {
+  var i = trim(cut_out_tags(input.value));
+  var key = event.keyCode;
+  switch (key) {
+    case 13:
+    if (i == '') {
+      return;
+    }
+    output.innerHTML = output.innerHTML + '<p class="user">' + i + '</p>';
+    history.push(i);
+    get_veronicas_response(i);
+    input.value = '';
+    break;
+  }
+}
+
+function veronica_says(what) {
+  setTimeout(function() {
+    output.innerHTML = output.innerHTML + '<p class="veronica">' + what + '</p>';
+    window.scrollTo(0, document.body.scrollHeight);
+  }, random_int(400, 1000));
+}
+
+function get_veronicas_response(text) {
+  // parse the person's input
+  
+  // regex gotchas
+  if (/^(hai|hello|hey|hi|hola|oh hai)/i.test(text)) {
+		veronica_says("oh, hi");
+    return;
+	}
+  
+  if (/^(bai|bye|goodbye|caio|cya)/i.test(text)) {
+		veronica_says('lol cya');
+    return;
+	}
+  
+  if (/^good afternoon/i.test(text)) {
+		veronica_says('afternoons are tough');
+    return;
+	}
+  
+  if (/^good evening/i.test(text)) {
+		veronica_says('is it a nice time for a walk?');
+    return;
+	}
+  
+  if (/welp/i.test(text)) {
+		veronica_says('you\'re tellin me');
+    return;
+	}
+  
+  if (/^yes/i.test(text)) {
+    veronica_says('oh, well that\'s good then');
+    return;
+  }
+  
+  if (/^no/i.test(text)) {
+    veronica_says('oh, hmm');
+    return;
+  }
+  
+  if (/^hah/i.test(text)) {
+    veronica_says('lol');
+    return;
+  }
+  
+  // respond to questions
+  if (/\?$/i.test(text)) {
+    veronica_says('i have answers!');
+    return;
+  }
+  
+  // respond to my name
+  if (self_regex.test(text)) {
+    var bot_matches = chatline.match(self_regex);
+		var self_response = '';
+		var said_before = bot_matches[1].toLowerCase();
+		var said_after = bot_matches[2].toLowerCase();
+  }
+  
+  
+  // random chance for one of these...
+  var roll = random_int(15);
+	var random_response = '';
+
+	switch (roll) {
+		case 1:
+		random_response = 'welp.';
+		break;
+		case 2:
+		random_response = 'what are you talking about?';
+		break;
+		case 3:
+    case 4:
+		case 5:
+		var matches = text.match(/\b[\w']+\b/gi);
+		if (matches != null && matches.length > 0) {
+			random_response = 'so what about "'+matches[matches.length-1]+'"?';
+		} else {
+			random_response = 'i do not understand.';
+		}
+		break;
+		case 6:
+		case 7:
+		// random sentence...
+    random_response = 'get random sentence here!';
+		break;
+		case 8:
+		random_response = "do you know what you're talking about?";
+		break;
+		case 9:
+    case 10:
+    case 11:
+		var rolltwo = random_int(4);
+		switch (rolltwo) {
+			case 1:
+			random_response = "that's silly";
+			break;
+			case 2:
+			random_response = "i'm worried";
+			break;
+			case 3:
+			random_response = "that's a bit unwise";
+			break;
+			case 4:
+			random_response = "that's a bit upsetting";
+			break;
+		}
+		break;
+    case 12:
+    random_response = "no but seriously, come on";
+    break;
+	}
+
+	if (random_response != '') {
+		veronica_says(random_response);
+    return;
+	}
+  
+  // if all else fails
+  veronica_says("oh, okay");
+}
+
+// helper functions~~
+
+function trim(value) {
+  return value.replace(/^\s+|\s+$/g, "");
+}
+
+function cut_out_tags(value) {
+  return value.replace(/<.+>/g, "");
+}
+
+function random_int(min, max) { // inclusive
+	if (max == undefined) { // assume it's between 0 and whatever
+		return Math.floor(Math.random() * (min + 1));
+	} else {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+}
+
+</script>
+</body>
+</html>
