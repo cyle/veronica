@@ -166,8 +166,15 @@ function get_veronicas_response(text) {
 	}
   
   var history_roll = random_int(6);
-  if (history_roll > 3 && history.length > 10) {
+  if (history_roll > 3 && history.length >= 10) {
     veronica_says('what did you mean earlier by "'+history[history.length-random_int(4, 9)]+'"?');
+    return;
+  }
+  
+  var static_roll = random_int(6);
+  if (static_roll == 6) {
+    show_video('vids/static.mp4');
+    veronica_says("excuse me.");
     return;
   }
   
@@ -196,6 +203,7 @@ function random_int(min, max) { // inclusive
 function show_video(video_url) {
   $('#video').show();
   $('#video-player').attr('src', video_url);
+  $('#video-player').on('ended', remove_video);
 }
 
 function remove_video() {
