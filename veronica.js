@@ -1,3 +1,11 @@
+/*
+
+  Veronica~~
+  
+  an expression of digital solitude
+
+*/
+
 var my_name = 'veronica';
 var self_regex = new RegExp("^(.*)\\b"+my_name+"\\b(.*)$", 'i');
 var history = [];
@@ -156,6 +164,12 @@ function get_veronicas_response(text) {
 		veronica_says(random_response);
     return;
 	}
+  
+  var history_roll = random_int(6);
+  if (history_roll > 3 && history.length > 10) {
+    veronica_says('what did you mean earlier by "'+history[history.length-random_int(4, 9)]+'"?');
+    return;
+  }
   
   // if all else fails
   veronica_says("oh, okay");
