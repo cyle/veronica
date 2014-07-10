@@ -6,9 +6,13 @@
 
 */
 
-var my_name = 'veronica';
+var my_name = 'veronica'; // seems important
 var self_regex = new RegExp("^(.*)\\b"+my_name+"\\b(.*)$", 'i');
+
+// hold the chat history
 var history = [];
+
+// what are the output and input elements
 var output = document.getElementById('output');
 var input = document.getElementById('input-text');
 
@@ -17,7 +21,8 @@ var response_delay_min = 400;
 var response_delay_max = 1000;
 
 // will hold custom responses
-var custom_responses =[];
+var random_custom_responses = [];
+var random_introspection_questions = [];
 
 // do this crap when the window has loaded
 window.onload = function() {
@@ -26,8 +31,12 @@ window.onload = function() {
   $('#video-player').on('ended', remove_video);
   
   // grab those custom responses, we'll need them
-  $.get('custom-responses.json', function(data) {
-    custom_responses = data;
+  $.get('random-custom-responses.json', function(data) {
+    random_custom_responses = data;
+  }, 'json');
+  
+  $.get('random-introspection-questions.json', function(data) {
+    random_introspection_questions = data;
   }, 'json');
   
   // let's get this party started
@@ -184,19 +193,29 @@ function get_veronicas_response(text) {
       return;
     }
     
-    veronica_says('i have answers!');
-    return;
+    // answer the question if you can
+    
+    
+    // otherwise take out question mark and continue on
+    text = text.replace('?', '');
   }
   
   // use random word from input
   var word_matches = text.match(/\b[\w']+\b/gi);
 	if (word_matches != null && word_matches.length > 0 && random_int(10) > 7) {
 		veronica_says('so what about "'+word_matches[word_matches.length-1]+'"?');
+    return;
 	}
   
   // random chance for one of these...
-	if (random_int(10) > 3 && custom_responses.length > 0) {
-		veronica_says(get_random_custom_response());
+	if (random_int(10) > 3 && random_custom_responses.length > 0) {
+		veronica_says(get_random_custom_response(random_custom_responses));
+    return;
+	}
+  
+  // random introspective question
+  if (random_int(10) > 4 && random_introspection_questions.length > 0) {
+		veronica_says(get_random_custom_response(random_introspection_questions));
     return;
 	}
   
@@ -219,7 +238,7 @@ function get_veronicas_response(text) {
   veronica_says("oh, okay");
 }
 
-function get_random_custom_response() {
+function get_random_custom_response(custom_responses) {
   // go through weights, add em up
   var response = 'uhh';
   var weight_total = 0;
