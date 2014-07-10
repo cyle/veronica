@@ -1,0 +1,13 @@
+[
+  { "what": "do you know what you're talking about?", "weight": 4 },
+  { "what": "that's a bit unwise", "weight": 4 },
+  { "what": "that's a bit upsetting", "weight": 4 },
+  { "what": "that's silly", "weight": 4 },
+  { "what": "i'm worried", "weight": 4 },
+  { "what": "i suggest you for for a walk", "weight": 2 },
+  { "what": "no but seriously, come on", "weight": 3 },
+  { "what": "welp", "weight": 5 },
+  { "what": "what are you talking about?", "weight": 4 },
+  { "what": "i do not understand, please explain more", "weight": 2 },
+  { "what": "sounds like a case of the feels", "weight": 2 }
+]

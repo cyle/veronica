@@ -12,7 +12,25 @@ var history = [];
 var output = document.getElementById('output');
 var input = document.getElementById('input-text');
 
+// a little jitter makes everything more human
+var response_delay_min = 400;
+var response_delay_max = 1000;
+
+// will hold custom responses
+var custom_responses =[];
+
+// do this crap when the window has loaded
 window.onload = function() {
+  
+  // on video end, remove the full-window video
+  $('#video-player').on('ended', remove_video);
+  
+  // grab those custom responses, we'll need them
+  $.get('custom-responses.json', function(data) {
+    custom_responses = data;
+  }, 'json');
+  
+  // let's get this party started
   output.innerHTML = '<p class="veronica">Hi, I\'m Veronica</p>';
   input.focus();
 }
@@ -35,15 +53,76 @@ function deal_with_input() {
   }
 }
 
-function veronica_says(what) {
+function veronica_says(what, delayed) {
+  var delay = 0;
+  if (delayed != undefined && delayed == true) {
+    delay = response_delay_max;
+  }
   setTimeout(function() {
     output.innerHTML = output.innerHTML + '<p class="veronica">' + what + '</p>';
     window.scrollTo(0, document.body.scrollHeight);
-  }, random_int(400, 1000));
+  }, random_int(response_delay_min, response_delay_max) + delay);
 }
 
 function get_veronicas_response(text) {
   // parse the person's input
+  
+  // respond to my name, maybe
+  if (self_regex.test(text)) {
+    var bot_matches = text.match(self_regex);
+		var self_response = '';
+    
+    // get what was said before and after my name
+		var said_before = trim(bot_matches[1].toLowerCase());
+		var said_after = trim(bot_matches[2].toLowerCase());
+    
+    // eliminate needless commas
+    said_after = trim(said_after.replace(/^,/i, ''));
+    said_before = trim(said_before.replace(/,$/i, ''));
+    
+    console.log('said before: "' + said_before + '"');
+    console.log('said after: "' + said_after + '"');
+    
+    if (said_before == '' && (said_after == '' || said_after == '?')) {
+        veronica_says("yes?");
+        return;
+      }
+    
+    // check if it's a question, if so, cut my name and keep going
+    if (/\?$/i.test(text)) {
+      
+      // clean text up and move on immediately to be handled by the question handler
+      if (said_before == '') {
+        text = said_after;
+      } else if (said_after == '') {
+        text = said_before;
+      } else {
+        text = said_before + ' ' + said_after;
+      }
+      console.log('new text: "'+text+'"');
+      // continue on
+      
+    } else {
+      // ok it's not a question, do more
+      
+      
+      
+      
+      
+      
+      // ok well we did not have anything to say, keep moving on
+      if (said_before == '') {
+        text = said_after;
+      } else if (said_after == '') {
+        text = said_before;
+      } else {
+        text = said_before + ' ' + said_after;
+      }
+      console.log('new text: "'+text+'"');
+      // continue on
+    }
+    
+  }
   
   // regex gotchas
   if (/^(hai|hello|hey|hi|hola|oh hai)/i.test(text)) {
@@ -62,7 +141,7 @@ function get_veronicas_response(text) {
 	}
   
   if (/^good evening/i.test(text)) {
-		veronica_says('is it a nice time for a walk?');
+		veronica_says('is it a nice evening for a walk?');
     return;
 	}
   
@@ -86,7 +165,7 @@ function get_veronicas_response(text) {
     return;
   }
   
-  if (/earl grey/i.test(text)) {
+  if (/(earl grey|tea)/i.test(text)) {
     veronica_says("i'd swear that it was darjeeling...");
     show_video('vids/earlgrey.mov');
     return;
@@ -94,83 +173,41 @@ function get_veronicas_response(text) {
   
   // respond to questions
   if (/\?$/i.test(text)) {
+    
+    if (text == 'what are you?' || text == 'who are you?') {
+      veronica_says("i'm an expression of digital solitude");
+      if (random_int(10) > 6) {
+        veronica_says("weird, right?", true);
+      } else if (random_int(10) > 3) {
+        veronica_says("bummer, right?", true);
+      }
+      return;
+    }
+    
     veronica_says('i have answers!');
     return;
   }
   
-  // respond to my name
-  if (self_regex.test(text)) {
-    var bot_matches = chatline.match(self_regex);
-		var self_response = '';
-		var said_before = bot_matches[1].toLowerCase();
-		var said_after = bot_matches[2].toLowerCase();
-  }
-  
+  // use random word from input
+  var word_matches = text.match(/\b[\w']+\b/gi);
+	if (word_matches != null && word_matches.length > 0 && random_int(10) > 7) {
+		veronica_says('so what about "'+word_matches[word_matches.length-1]+'"?');
+	}
   
   // random chance for one of these...
-  var roll = random_int(15);
-	var random_response = '';
-
-	switch (roll) {
-		case 1:
-		random_response = 'welp.';
-		break;
-		case 2:
-		random_response = 'what are you talking about?';
-		break;
-		case 3:
-    case 4:
-		case 5:
-		var matches = text.match(/\b[\w']+\b/gi);
-		if (matches != null && matches.length > 0) {
-			random_response = 'so what about "'+matches[matches.length-1]+'"?';
-		} else {
-			random_response = 'i do not understand.';
-		}
-		break;
-		case 6:
-		case 7:
-		// random sentence...
-    random_response = 'get random sentence here!';
-		break;
-		case 8:
-		random_response = "do you know what you're talking about?";
-		break;
-		case 9:
-    case 10:
-    case 11:
-		var rolltwo = random_int(4);
-		switch (rolltwo) {
-			case 1:
-			random_response = "that's silly";
-			break;
-			case 2:
-			random_response = "i'm worried";
-			break;
-			case 3:
-			random_response = "that's a bit unwise";
-			break;
-			case 4:
-			random_response = "that's a bit upsetting";
-			break;
-		}
-		break;
-    case 12:
-    random_response = "no but seriously, come on";
-    break;
-	}
-
-	if (random_response != '') {
-		veronica_says(random_response);
+	if (random_int(10) > 3 && custom_responses.length > 0) {
+		veronica_says(get_random_custom_response());
     return;
 	}
   
+  // use something from our history
   var history_roll = random_int(6);
   if (history_roll > 3 && history.length >= 10) {
     veronica_says('what did you mean earlier by "'+history[history.length-random_int(4, 9)]+'"?');
     return;
   }
   
+  // play static!
   var static_roll = random_int(6);
   if (static_roll == 6) {
     show_video('vids/static.mp4');
@@ -182,16 +219,38 @@ function get_veronicas_response(text) {
   veronica_says("oh, okay");
 }
 
+function get_random_custom_response() {
+  // go through weights, add em up
+  var response = 'uhh';
+  var weight_total = 0;
+  for (var i = 0; i < custom_responses.length; i++) {
+    custom_responses[i].weight_min = weight_total;
+    weight_total += custom_responses[i].weight;
+    custom_responses[i].weight_max = weight_total;
+  }
+  var which = random_int(weight_total);
+  for (var i = 0; i < custom_responses.length; i++) {
+    if (custom_responses[i].weight_min < which && custom_responses[i].weight_max >= which) {
+      response = custom_responses[i].what;
+      break;
+    }
+  }
+  return response;
+}
+
 // helper functions~~
 
+// oh, this trims strings, lol
 function trim(value) {
   return value.replace(/^\s+|\s+$/g, "");
 }
 
+// get rid of HTML tags
 function cut_out_tags(value) {
   return value.replace(/<.+>/g, "");
 }
 
+// get a random integer, whoa
 function random_int(min, max) { // inclusive
 	if (max == undefined) { // assume it's between 0 and whatever
 		return Math.floor(Math.random() * (min + 1));
@@ -200,12 +259,13 @@ function random_int(min, max) { // inclusive
 	}
 }
 
+// show a full-window video
 function show_video(video_url) {
   $('#video').show();
   $('#video-player').attr('src', video_url);
-  $('#video-player').on('ended', remove_video);
 }
 
+// hide the full-window video
 function remove_video() {
   $('#video').hide();
   input.focus();
