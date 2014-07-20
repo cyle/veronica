@@ -1,5 +1,9 @@
 [
   { "what": "how do you begin to open?", "weight": 4 },
   { "what": "what's something you wish you could do every day?", "weight": 4 },
-  { "what": "why aren't you doing what you want?", "weight": 4 }
+  { "what": "why aren't you doing what you want?", "weight": 4 },
+  { "what": "what are you most nervous about?", "weight": 3 },
+  { "what": "what are you afraid of?", "weight": 3 },
+  { "what": "why are you talking to me?", "weight": 3 },
+  { "what": "what's on your mind?", "weight": 2 }
 ]

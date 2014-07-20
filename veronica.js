@@ -135,7 +135,11 @@ function get_veronicas_response(text) {
   
   // regex gotchas
   if (/^(hai|hello|hey|hi|hola|oh hai)/i.test(text)) {
-		veronica_says("oh, hi");
+    if (random_int(10) > 6) {
+      veronica_says("hi, how are you?");
+    } else {
+      veronica_says("oh, hi");
+    }
     return;
 	}
   
@@ -158,6 +162,15 @@ function get_veronicas_response(text) {
 		veronica_says('you\'re tellin me');
     return;
 	}
+  
+  if (/^you$/i.test(text)) {
+    if (random_int(10) > 6) {
+      veronica_says('me?');
+    } else {
+      veronica_says('what about me?');
+    }
+    return;
+  }
   
   if (/^yes/i.test(text)) {
     veronica_says('oh, well that\'s good then');
@@ -203,26 +216,54 @@ function get_veronicas_response(text) {
   // use random word from input
   var word_matches = text.match(/\b[\w']+\b/gi);
 	if (word_matches != null && word_matches.length > 0 && random_int(10) > 7) {
-		veronica_says('so what about "'+word_matches[word_matches.length-1]+'"?');
+    if (random_int(10) > 5) {
+      veronica_says('can you be more specific about "'+word_matches[word_matches.length-1]+'"?');
+    } else {
+      veronica_says('so what about "'+word_matches[word_matches.length-1]+'"?');
+    }
     return;
 	}
   
   // random chance for one of these...
-	if (random_int(10) > 3 && random_custom_responses.length > 0) {
+	if (random_int(10) > 5 && random_custom_responses.length > 0) {
 		veronica_says(get_random_custom_response(random_custom_responses));
     return;
 	}
   
   // random introspective question
-  if (random_int(10) > 4 && random_introspection_questions.length > 0) {
+  if (random_int(10) > 5 && random_introspection_questions.length > 0) {
 		veronica_says(get_random_custom_response(random_introspection_questions));
     return;
 	}
   
   // use something from our history
-  var history_roll = random_int(6);
-  if (history_roll > 3 && history.length >= 10) {
+  var history_roll = random_int(10);
+  if (history_roll > 5 && history.length >= 10) {
     veronica_says('what did you mean earlier by "'+history[history.length-random_int(4, 9)]+'"?');
+    return;
+  }
+  
+  // random sentence
+  if (random_int(10) > 5) {
+    $.get('sentence.php', function(data) {
+      veronica_says(data.text);
+    }, 'json');
+		return;
+  }
+  
+  // random cyle poetry
+  if (random_int(10) > 6) {
+    $.get('cyle_poetry.php', function(data) {
+      veronica_says(data.line);
+    }, 'json');
+    return;
+  }
+  
+  // give em a random image
+  if (random_int(10) > 7 || /image/i.test(text)) {
+    $.get('http://no.dev.emerson.edu/random_crap.php?json', function(data) {
+      veronica_says('<img src="'+data.image+'" style="width: 600px; height: auto;" />');
+    }, 'json');
     return;
   }
   

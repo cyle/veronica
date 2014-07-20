@@ -3,6 +3,7 @@
   { "what": "that's a bit unwise", "weight": 4 },
   { "what": "that's a bit upsetting", "weight": 4 },
   { "what": "that's silly", "weight": 4 },
+  { "what": "you really have to be motivated to keep talking, i can't do this by myself", "weight": 2 },
   { "what": "i'm worried", "weight": 4 },
   { "what": "i suggest you for for a walk", "weight": 2 },
   { "what": "no but seriously, come on", "weight": 3 },
