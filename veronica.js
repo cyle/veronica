@@ -20,6 +20,27 @@ var input = document.getElementById('input-text');
 var response_delay_min = 400;
 var response_delay_max = 1000;
 
+// videos, man
+var videos = [
+  'vids/a_man_dies.mov',
+  'vids/chill.mov',
+  'vids/cliff.mov',
+  'vids/do-anything.mov',
+  'vids/earlgrey.mov',
+  'vids/firstofall.mp4',
+  'vids/howyoudoin.mov',
+  'vids/magnificent-bastard.mp4',
+  'vids/no.mov',
+  'vids/okay.mov',
+  'vids/orson_silence.mov',
+  'vids/pickled.mov',
+  'vids/seenthings.mov',
+  'vids/shabba.mov',
+  'vids/shatner.mov',
+  'vids/theparty.mov',
+  'vids/turnthisthingoff.mp4'
+];
+
 // will hold custom responses
 var random_custom_responses = [];
 var random_introspection_questions = [];
@@ -267,6 +288,12 @@ function get_veronicas_response(text) {
     return;
   }
   
+  // give em a random video
+  if (random_int(10) > 5 || /video/i.test(text)) {
+    show_video(videos[random_int(videos.length - 1)]);
+    return;
+  }
+  
   // play static!
   var static_roll = random_int(6);
   if (static_roll == 6) {
@@ -327,6 +354,7 @@ function show_video(video_url) {
 
 // hide the full-window video
 function remove_video() {
+  document.getElementById('video-player').pause();
   $('#video').hide();
   input.focus();
 }
