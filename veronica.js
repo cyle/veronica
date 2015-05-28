@@ -10,7 +10,7 @@ var my_name = 'veronica'; // seems important
 var self_regex = new RegExp("^(.*)\\b"+my_name+"\\b(.*)$", 'i');
 
 // hold the chat history
-var history = [];
+var chat_history = [];
 
 // what are the output and input elements
 var output = document.getElementById('output');
@@ -76,7 +76,7 @@ function deal_with_input() {
       return;
     }
     output.innerHTML = output.innerHTML + '<p class="user">' + i + '</p>';
-    history.push(i);
+    chat_history.push(i);
     get_veronicas_response(i);
     input.value = '';
     break;
@@ -259,8 +259,8 @@ function get_veronicas_response(text) {
   
   // use something from our history
   var history_roll = random_int(10);
-  if (history_roll > 5 && history.length >= 10) {
-    veronica_says('what did you mean earlier by "'+history[history.length-random_int(4, 9)]+'"?');
+  if (history_roll > 5 && chat_history.length >= 10) {
+    veronica_says('what did you mean earlier by "'+chat_history[chat_history.length-random_int(4, 9)]+'"?');
     return;
   }
   
